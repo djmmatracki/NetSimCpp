@@ -1,58 +1,40 @@
+//#include "gmock/gmock.h"
 #include "gtest/gtest.h"
+
 #include "package.hpp"
-#include "storage_types.hpp"
+#include "types.hpp"
 
-// Test sprawdzajacy konstruktor nie przyjmujacy argumentow
-TEST(PackageTest, konstruktor_1)
-{
-    Package pack1 = Package(6);
-    Package pack2 = Package(5);
-    Package pack3 = Package();
-    ASSERT_EQ(pack3.get_id(), 0); // Sprawdzamy czy paczka ma mozliwie najmniejszy id
-    ASSERT_EQ(pack2.get_id(), 5);
-    ASSERT_EQ(pack1.get_id(), 6);
-    std::cout << "TEST PASSED" << std::endl;
+TEST(PackageTest, IsAssignedIdLowest) {
+    // przydzielanie ID o jeden większych -- utworzenie dwóch obiektów pod rząd
+
+    Package p1;
+    Package p2;
+
+    EXPECT_EQ(p1.get_id(), 1);
+    EXPECT_EQ(p2.get_id(), 2);
 }
 
-// Test sprawdzajacy konstruktor przyjmujacy indeks
-TEST(PackageTest, konstruktor_2)
-{
-    ElementID id = 1;
-    Package pack = Package(id);
-    ASSERT_EQ(pack.get_id(), id);
+TEST(PackageTest, IsIdReused) {
+    // przydzielanie ID po zwolnionym obiekcie
+
+    {
+        Package p1;
+    }
+    Package p2;
+
+    EXPECT_EQ(p2.get_id(), 1);
 }
 
-// Test sprawdzajacy konstruktor przyjmujacy podwojna referencje Package
-TEST(PackageTest, konstruktor_3)
-{
-    Package pack1 = Package(2);
-    Package pack2 = std::move(pack1);
-    ASSERT_EQ(pack2.get_id(), 2);
+TEST(PackageTest, IsMoveConstructorCorrect) {
+    Package p1;
+    Package p2(std::move(p1));
+
+    EXPECT_EQ(p2.get_id(), 1);
 }
 
-TEST(PackageQueueTest, test_lifo)
-{
-    PackageQueue pq(PackageQueueType::LIFO);
+TEST(PackageTest, IsAssignmentOperatorCorrect) {
+    Package p1;
+    Package p2 = std::move(p1);
 
-    pq.push(Package(1));
-    pq.push(Package(2));
-    pq.push(Package(3));
-    Package p = pq.pop();
-
-    ASSERT_EQ(p.get_id(), 3);
-    std::cout << "TEST PASSED!" << std::endl;
-}
-
-TEST(PackageQueueTest, test_fifo)
-{
-    PackageQueue pq(PackageQueueType::FIFO);
-
-    pq.push(Package(1));
-    pq.push(Package(2));
-    pq.push(Package(3));
-
-    Package p = pq.pop();
-
-    ASSERT_EQ(p.get_id(), 1);
-    std::cout << "TEST PASSED!" << std::endl;
+    EXPECT_EQ(p2.get_id(), 1);
 }

@@ -3,9 +3,6 @@
 
 // ewentualne pomocnicze obiekty i funkcje globalne(np. generator liczb losowych)
 
-double probability_generator()
-{
-    return 1;
-}
+double probability_generator();
 
 #endif // IMPLEMENTATION_HELPERS_HPP

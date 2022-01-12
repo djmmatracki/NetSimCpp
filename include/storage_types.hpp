@@ -3,8 +3,6 @@
 #include "types.hpp"
 #include "package.hpp"
 
-using const_iterator = std::list<Package>::const_iterator;
-
 enum class PackageQueueType
 {
     FIFO,
@@ -14,6 +12,7 @@ enum class PackageQueueType
 class IPackageStockpile
 {
 public:
+    using const_iterator = std::list<Package>::const_iterator;
     // Wszystko to to powinny byc metody wirtualne
     virtual void push(Package &&pack) = 0;
     virtual const_iterator begin() = 0;
@@ -26,14 +25,14 @@ public:
     virtual ~IPackageStockpile() = default;
 };
 
-class IPackageQueue : IPackageStockpile
+class IPackageQueue : public IPackageStockpile
 {
 public:
     virtual Package pop() = 0;
     virtual PackageQueueType get_queue_type() const = 0;
 };
 
-class PackageQueue : IPackageQueue
+class PackageQueue : public IPackageQueue
 {
 public:
     PackageQueue(PackageQueueType type) : type_(type){};
